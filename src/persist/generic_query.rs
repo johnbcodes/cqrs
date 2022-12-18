@@ -125,9 +125,8 @@ where
     A: Aggregate,
 {
     async fn dispatch(&self, view_id: &str, events: &[EventEnvelope<A>]) {
-        match self.apply_events(view_id, events).await {
-            Ok(_) => {}
-            Err(err) => self.handle_error(err),
+        if let Err(err) = self.apply_events(view_id, events).await {
+            self.handle_error(err);
         };
     }
 }

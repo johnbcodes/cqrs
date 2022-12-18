@@ -20,13 +20,10 @@ impl ReplayStream {
     pub async fn next<A: Aggregate>(
         &mut self,
     ) -> Option<Result<EventEnvelope<A>, PersistenceError>> {
-        self.queue.recv().await.map(|result| match result {
-            Ok(event) => match TryInto::try_into(event) {
-                Ok(event) => Ok(event),
-                Err(err) => Err(err),
-            },
-            Err(err) => Err(err),
-        })
+        self.queue
+            .recv()
+            .await
+            .map(|result| result.and_then(TryInto::try_into))
     }
 }
 
