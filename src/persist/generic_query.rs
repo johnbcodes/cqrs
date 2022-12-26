@@ -88,13 +88,14 @@ where
     }
 
     async fn load_mut(&self, view_id: String) -> Result<(V, ViewContext), PersistenceError> {
-        match self.view_repository.load_with_context(&view_id).await? {
-            None => {
+        Ok(self
+            .view_repository
+            .load_with_context(&view_id)
+            .await?
+            .unwrap_or_else(|| {
                 let view_context = ViewContext::new(view_id, 0);
-                Ok((Default::default(), view_context))
-            }
-            Some((view, context)) => Ok((view, context)),
-        }
+                (Default::default(), view_context)
+            }))
     }
 
     pub(crate) async fn apply_events(

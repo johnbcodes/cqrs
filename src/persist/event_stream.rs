@@ -55,9 +55,12 @@ mod test {
             .unwrap();
         drop(feed);
         let found = stream.next::<MyAggregate>().await;
-        match found.unwrap().unwrap_err() {
-            PersistenceError::OptimisticLockError => {}
-            _ => panic!("expected optimistic lock error"),
-        }
+        assert!(
+            matches!(
+                found.unwrap().unwrap_err(),
+                PersistenceError::OptimisticLockError
+            ),
+            "expected optimistic lock error"
+        )
     }
 }

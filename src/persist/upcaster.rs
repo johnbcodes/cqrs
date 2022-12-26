@@ -64,8 +64,8 @@ impl FromStr for SemanticVersion {
     fn from_str(event_version: &str) -> Result<Self, Self::Err> {
         let mut split_version = event_version.split('.').fuse();
         let major_version = u32::from_str(split_version.next().unwrap())?;
-        let minor_version = split_version.next().map_or(Ok(0), |x| u32::from_str(x))?;
-        let patch = split_version.next().map_or(Ok(0), |x| u32::from_str(x))?;
+        let minor_version = split_version.next().map_or(Ok(0), u32::from_str)?;
+        let patch = split_version.next().map_or(Ok(0), u32::from_str)?;
         Ok(Self {
             major_version,
             minor_version,
@@ -164,7 +164,7 @@ impl SemanticVersionEventUpcaster {
 
 impl EventUpcaster for SemanticVersionEventUpcaster {
     fn can_upcast(&self, event_type: &str, event_version: &str) -> bool {
-        if event_type != &self.event_type {
+        if event_type != self.event_type {
             return false;
         }
         let event_version = match SemanticVersion::from_str(event_version) {
