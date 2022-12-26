@@ -92,10 +92,7 @@ where
             .view_repository
             .load_with_context(&view_id)
             .await?
-            .unwrap_or_else(|| {
-                let view_context = ViewContext::new(view_id, 0);
-                (Default::default(), view_context)
-            }))
+            .unwrap_or_else(|| (Default::default(), ViewContext::new(view_id, 0))))
     }
 
     pub(crate) async fn apply_events(

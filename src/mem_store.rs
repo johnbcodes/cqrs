@@ -43,13 +43,10 @@ impl<A: Aggregate> MemStore<A> {
     /// //...
     /// let all_locked_events = store.get_events();
     /// let unlocked_events = all_locked_events.read().unwrap();
-    /// match unlocked_events.get("test-aggregate-id-C450D1A") {
-    ///     Some(events) => {
-    ///         for event in events {
-    ///             println!("{:?}", event);
-    ///         }
+    /// if let Some(events) = unlocked_events.get("test-aggregate-id-C450D1A") {
+    ///     for event in events {
+    ///         println!("{:?}", event);
     ///     }
-    ///     None => {}
     /// };
     /// ```
     pub fn get_events(&self) -> Arc<LockedEventEnvelopeMap<A>> {
@@ -155,13 +152,11 @@ impl<A: Aggregate> MemStore<A> {
             .into_iter()
             .map(|payload| {
                 sequence += 1;
-                let aggregate_id = aggregate_id.to_string();
-                let metadata = base_metadata.clone();
                 EventEnvelope {
-                    aggregate_id,
+                    aggregate_id: aggregate_id.to_string(),
                     sequence,
                     payload,
-                    metadata,
+                    metadata: base_metadata.clone(),
                 }
             })
             .collect()
