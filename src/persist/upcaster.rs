@@ -283,12 +283,11 @@ mod test {
     }
     #[test]
     fn semantic_version_upcaster_upcast_for_documentation() {
-        let upcast_function = Box::new(|payload: Value| match payload {
-            Value::Object(mut object_map) => {
+        let upcast_function = Box::new(|payload: Value| {
+            if let Value::Object(mut object_map) = payload {
                 object_map.insert("country".to_string(), "USA".into());
                 Value::Object(object_map)
-            }
-            _ => {
+            } else {
                 panic!("the event payload is not an object")
             }
         });
